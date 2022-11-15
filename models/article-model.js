@@ -1,4 +1,5 @@
 const db = require("../db/connection.js");
+const { checkArticleExist } = require("../utils/db.js");
 
 exports.selectAricles = () => {
   return db
@@ -40,5 +41,24 @@ exports.selectArticlebyId = (article_id) => {
       }
 
       return result.rows[0];
+    });
+};
+
+exports.selectCommentbyArticle = (article_id) => {
+  return checkArticleExist(article_id)
+    .then(() => {
+      return db.query(
+        `
+         SELECT comments.comment_id,votes,created_at ,comments.author,body
+         FROM comments
+         JOIN users ON users.username=comments.author   
+         WHERE article_id =$1
+         GROUP BY article_id,comments.comment_id
+         ORDER BY created_at DESC`,
+        [article_id]
+      );
+    })
+    .then((result) => {
+      return result.rows;
     });
 };

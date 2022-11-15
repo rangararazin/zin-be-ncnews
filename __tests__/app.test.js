@@ -103,3 +103,47 @@ describe("GET: /api/articles/:article_id", () => {
       });
   });
 });
+
+describe("GET: /api/articles/:article_id/comments", () => {
+  test("200: responds with array of comments of given articel_id", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then((res) => {
+        expect(res.body.comments[0].body).toEqual("I hate streaming noses");
+        expect(Object.keys(res.body.comments[0])).toEqual([
+          "comment_id",
+          "votes",
+          "created_at",
+          "author",
+          "body",
+        ]);
+      });
+  });
+  test("200 : should return array of comments in descending order", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+
+  test("404 : respond with not found message when valid id but does not exist", () => {
+    return request(app)
+      .get("/api/articles/45454/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Article not found");
+      });
+  });
+
+  test("200 : should return empty array when article has no comments", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toEqual([]);
+      });
+  });
+});
