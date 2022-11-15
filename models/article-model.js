@@ -38,6 +38,7 @@ exports.selectArticlebyId = (article_id) => {
       if (!result.rows.length) {
         return Promise.reject({ status: 404, msg: "Article not found" });
       }
+      console.log(result.rows[0]);
       return result.rows[0];
     });
 };
