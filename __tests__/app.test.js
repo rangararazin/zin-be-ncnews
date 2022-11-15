@@ -91,7 +91,7 @@ describe("GET: /api/articles/:article_id", () => {
       .get("/api/articles/45454")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("Not found");
+        expect(body.msg).toBe(" Article not found");
       });
   });
   test("400:returns bad request when passed invalid datatype", () => {
