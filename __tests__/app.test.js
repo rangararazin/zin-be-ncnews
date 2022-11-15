@@ -146,7 +146,7 @@ describe("GET: /api/articles/:article_id/comments", () => {
         expect(body.comments).toEqual([]);
       });
   });
-  test("400 : returns bad request when passed invalid datatype", () => {
+  test("400 : returns bad request when passed invalid datatype article_id", () => {
     return request(app)
       .get("/api/articles/not-a-number/comments")
       .expect(400)
