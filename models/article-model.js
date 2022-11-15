@@ -23,3 +23,21 @@ exports.selectAricles = () => {
       return convertedResult;
     });
 };
+
+exports.selectArticlebyId = (article_id) => {
+  return db
+    .query(
+      `
+      SELECT articles.author,title,article_id,body, topic,created_at,votes 
+      FROM articles
+      JOIN users ON users.username=articles.author
+      WHERE article_id = $1`,
+      [article_id]
+    )
+    .then((result) => {
+      if (!result.rows.length) {
+        return Promise.reject({ status: 404, msg: "Not found" });
+      }
+      return result.rows[0];
+    });
+};

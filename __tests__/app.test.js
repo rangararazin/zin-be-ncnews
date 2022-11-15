@@ -68,3 +68,38 @@ describe("GET: /api/articles", () => {
       });
   });
 });
+
+describe("GET: /api/articles/:article_id", () => {
+  test("200: should return an array of articles of given id", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toMatchObject({
+          author: expect.any(String),
+          title: expect.any(String),
+          article_id: expect.any(Number),
+          body: expect.any(String),
+          topic: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+        });
+      });
+  });
+  test("404 : respond with not found message when valid id but does not exist", () => {
+    return request(app)
+      .get("/api/articles/45454")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found");
+      });
+  });
+  test("400:returns bad request when passed invalid datatype", () => {
+    return request(app)
+      .get("/api/articles/badrequest")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+});
