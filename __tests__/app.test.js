@@ -155,3 +155,69 @@ describe("GET: /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("POST : /api/articles/:article_id/comments", () => {
+  test("201 : responds with new comment", () => {
+    return request(app)
+      .post("/api/articles/1")
+      .send({
+        username: "rogersop",
+        body: "lorem ipsum roger",
+      })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toEqual({
+          comment_id: expect.any(Number),
+          article_id: 1,
+          votes: 0,
+          created_at: expect.any(String),
+          author: "rogersop",
+          body: "lorem ipsum roger",
+        });
+      });
+  });
+
+  test("400:if user doesn't exist", () => {
+    return request(app)
+      .post("/api/articles/1")
+      .send({
+        username: "unknownuser",
+        body: "lorem ipsum roger",
+      })
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("User not found");
+      });
+  });
+  test("400: Bad request when posting wrong type of body data", () => {
+    return request(app)
+      .post("/api/articles/1")
+      .send({
+        username: "rogersop",
+        body: 654654654,
+      })
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request");
+      });
+  });
+  test("400 : returns bad request when passed invalid datatype article_id", () => {
+    return request(app)
+      .get("/api/articles/not-a-number")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("400: Bad request when posting malformed body", () => {
+    return request(app)
+      .post("/api/articles/1")
+      .send({
+        username: "rogersop",
+      })
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request");
+      });
+  });
+});
