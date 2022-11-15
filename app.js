@@ -2,6 +2,7 @@ const express = require("express");
 const {
   getArticles,
   getArticlebyId,
+  getCommentsbyArticle,
 } = require("./controllers/article-controller");
 const { getTopics } = require("./controllers/topic-controller");
 
@@ -13,6 +14,8 @@ app.get("/api/topics", getTopics);
 app.get("/api/articles", getArticles);
 
 app.get("/api/articles/:article_id", getArticlebyId);
+
+app.get("/api/articles/:article_id/comments", getCommentsbyArticle);
 
 app.all("/*", (req, res) => {
   res.status(404).send({ msg: "URL not found" });
