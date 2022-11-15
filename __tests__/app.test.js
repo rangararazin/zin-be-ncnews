@@ -146,4 +146,12 @@ describe("GET: /api/articles/:article_id/comments", () => {
         expect(body.comments).toEqual([]);
       });
   });
+  test("400 : returns bad request when passed invalid datatype", () => {
+    return request(app)
+      .get("/api/articles/not-a-number/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
 });
