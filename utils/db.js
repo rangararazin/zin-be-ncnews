@@ -16,16 +16,16 @@ WHERE article_Id =$1`,
     });
 };
 
-exports.checkUserExist = (table, column, value) => {
+exports.checkUserExist = (column, value) => {
   const queryStr = format(
-    `SELECT * FROM %I where %I=%L;`,
-    table,
+    `SELECT * FROM users where %I=%L;`,
+
     column,
     value
   );
   return db.query(queryStr).then((result) => {
     if (!result.rows.length) {
-      return Promise.reject({ status: 400, msg: "User not found" });
+      return Promise.reject({ status: 404, msg: "User not found" });
     }
   });
 };

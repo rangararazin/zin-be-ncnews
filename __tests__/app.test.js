@@ -177,14 +177,14 @@ describe("POST : /api/articles/:article_id/comments", () => {
       });
   });
 
-  test("400:if user doesn't exist", () => {
+  test("404:if user doesn't exist", () => {
     return request(app)
       .post("/api/articles/1")
       .send({
         username: "unknownuser",
         body: "lorem ipsum roger",
       })
-      .expect(400)
+      .expect(404)
       .then((res) => {
         expect(res.body.msg).toBe("User not found");
       });
@@ -218,6 +218,14 @@ describe("POST : /api/articles/:article_id/comments", () => {
       .expect(400)
       .then((res) => {
         expect(res.body.msg).toBe("Bad request");
+      });
+  });
+  test("404 : respond with not found message when valid id but does not exist", () => {
+    return request(app)
+      .get("/api/articles/45454")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Article not found");
       });
   });
 });

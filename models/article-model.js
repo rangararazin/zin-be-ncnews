@@ -68,7 +68,10 @@ exports.insertCommentbyArticle = (article_id, username, body, votes = 0) => {
     return Promise.reject({ status: 400, msg: "Bad request" });
   }
 
-  return checkUserExist("users", "username", username)
+  return checkArticleExist(article_id)
+    .then(() => {
+      return checkUserExist("username", username);
+    })
     .then(() => {
       return db.query(
         `
