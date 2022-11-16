@@ -64,7 +64,11 @@ exports.selectCommentbyArticle = (article_id) => {
 };
 
 exports.insertCommentbyArticle = (article_id, username, body, votes = 0) => {
-  if (typeof body !== "string") {
+  if (
+    typeof body !== "string" ||
+    body === undefined ||
+    username === undefined
+  ) {
     return Promise.reject({ status: 400, msg: "Bad request" });
   }
 

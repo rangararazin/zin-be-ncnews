@@ -236,4 +236,16 @@ describe("POST: /api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("Article not found");
       });
   });
+  test("400: Bad request when posting with wrong/misspelled object keys", () => {
+    return request(app)
+      .post("/api/articles/1")
+      .send({
+        usernam: "rogersop",
+        bo: "lorem ipsum roger",
+      })
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request");
+      });
+  });
 });
