@@ -1,5 +1,5 @@
 const db = require("../db/connection.js");
-const { checkArticleExist } = require("../utils/db.js");
+const { checkArticleExist, checkUserExist } = require("../utils/db.js");
 
 exports.selectAricles = () => {
   return db
@@ -60,5 +60,34 @@ exports.selectCommentbyArticle = (article_id) => {
     })
     .then((result) => {
       return result.rows;
+    });
+};
+
+exports.insertCommentbyArticle = (article_id, username, body, votes = 0) => {
+  if (
+    typeof body !== "string" ||
+    body === undefined ||
+    username === undefined
+  ) {
+    return Promise.reject({ status: 400, msg: "Bad request" });
+  }
+
+  return checkArticleExist(article_id)
+    .then(() => {
+      return checkUserExist("username", username);
+    })
+    .then(() => {
+      return db.query(
+        `
+    INSERT INTO comments
+    (body,votes,article_id,author,created_at)
+    VALUES
+    ($1,$2,$3,$4,$5)
+    RETURNING *`,
+        [body, votes, article_id, username, new Date()]
+      );
+    })
+    .then((result) => {
+      return result.rows[0];
     });
 };
