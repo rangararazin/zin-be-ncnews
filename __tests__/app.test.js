@@ -12,8 +12,8 @@ afterAll(() => {
   return db.end();
 });
 
-describe("GET /incorrect endpoints", () => {
-  test("404 : responds with message route not found", () => {
+describe("GET: /incorrect endpoints", () => {
+  test("404: responds with message route not found", () => {
     return request(app)
       .get("/invalidendpoint")
       .expect(404)
@@ -23,8 +23,8 @@ describe("GET /incorrect endpoints", () => {
   });
 });
 
-describe("GET : /api/topics", () => {
-  test("should return an array of topics", () => {
+describe("GET: /api/topics", () => {
+  test("200: should return an array of topics", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
@@ -59,7 +59,7 @@ describe("GET: /api/articles", () => {
         });
       });
   });
-  test("200 : should return array of article in descending order", () => {
+  test("200: should return array of article in descending order", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -86,7 +86,7 @@ describe("GET: /api/articles/:article_id", () => {
         });
       });
   });
-  test("404 : respond with not found message when valid id but does not exist", () => {
+  test("404: respond with not found message when valid id but does not exist", () => {
     return request(app)
       .get("/api/articles/45454")
       .expect(404)
@@ -94,7 +94,7 @@ describe("GET: /api/articles/:article_id", () => {
         expect(body.msg).toBe("Article not found");
       });
   });
-  test("400:returns bad request when passed invalid datatype", () => {
+  test("400: returns bad request when passed invalid datatype", () => {
     return request(app)
       .get("/api/articles/badrequest")
       .expect(400)
@@ -120,7 +120,7 @@ describe("GET: /api/articles/:article_id/comments", () => {
         ]);
       });
   });
-  test("200 : should return array of comments in descending order", () => {
+  test("200: should return array of comments in descending order", () => {
     return request(app)
       .get("/api/articles/1/comments")
       .expect(200)
@@ -129,7 +129,7 @@ describe("GET: /api/articles/:article_id/comments", () => {
       });
   });
 
-  test("404 : respond with not found message when valid id but does not exist", () => {
+  test("404: respond with not found message when valid id but does not exist", () => {
     return request(app)
       .get("/api/articles/45454/comments")
       .expect(404)
@@ -138,7 +138,7 @@ describe("GET: /api/articles/:article_id/comments", () => {
       });
   });
 
-  test("200 : should return empty array when article has no comments", () => {
+  test("200: should return empty array when article has no comments", () => {
     return request(app)
       .get("/api/articles/2/comments")
       .expect(200)
@@ -146,7 +146,7 @@ describe("GET: /api/articles/:article_id/comments", () => {
         expect(body.comments).toEqual([]);
       });
   });
-  test("400 : returns bad request when passed invalid datatype article_id", () => {
+  test("400: returns bad request when passed invalid datatype article_id", () => {
     return request(app)
       .get("/api/articles/not-a-number/comments")
       .expect(400)
@@ -156,8 +156,8 @@ describe("GET: /api/articles/:article_id/comments", () => {
   });
 });
 
-describe("POST : /api/articles/:article_id/comments", () => {
-  test("201 : responds with new comment", () => {
+describe("POST: /api/articles/:article_id/comments", () => {
+  test("201: responds with new comment", () => {
     return request(app)
       .post("/api/articles/1")
       .send({
@@ -177,7 +177,7 @@ describe("POST : /api/articles/:article_id/comments", () => {
       });
   });
 
-  test("404:if user doesn't exist", () => {
+  test("404: if user doesn't exist", () => {
     return request(app)
       .post("/api/articles/1")
       .send({
@@ -201,9 +201,13 @@ describe("POST : /api/articles/:article_id/comments", () => {
         expect(res.body.msg).toBe("Bad request");
       });
   });
-  test("400 : returns bad request when passed invalid datatype article_id", () => {
+  test("400: returns bad request when passed invalid datatype article_id", () => {
     return request(app)
-      .get("/api/articles/not-a-number")
+      .post("/api/articles/not-a-number")
+      .send({
+        username: "rogersop",
+        body: "lorem ipsum roger",
+      })
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Bad request");
@@ -220,9 +224,13 @@ describe("POST : /api/articles/:article_id/comments", () => {
         expect(res.body.msg).toBe("Bad request");
       });
   });
-  test("404 : respond with not found message when valid id but does not exist", () => {
+  test("404: respond with not found message when valid id but article does not exist", () => {
     return request(app)
-      .get("/api/articles/45454")
+      .post("/api/articles/45454")
+      .send({
+        username: "rogersop",
+        body: "lorem ipsum roger",
+      })
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("Article not found");
