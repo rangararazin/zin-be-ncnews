@@ -7,6 +7,7 @@ const {
   patchArticlebyId,
 } = require("./controllers/article-controller");
 const { getTopics } = require("./controllers/topic-controller");
+const { getUsers } = require("./controllers/user-controller");
 
 const { handleCustomError, handlePSQLError } = require("./errors/errors");
 const app = express();
@@ -24,6 +25,8 @@ app.get("/api/articles/:article_id/comments", getCommentsbyArticle);
 app.post("/api/articles/:article_id", postCommentbyArticle);
 
 app.patch("/api/articles/:article_id", patchArticlebyId);
+
+app.get("/api/users", getUsers);
 
 app.all("/*", (req, res) => {
   res.status(404).send({ msg: "URL not found" });
