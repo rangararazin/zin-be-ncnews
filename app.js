@@ -4,6 +4,7 @@ const {
   getArticlebyId,
   getCommentsbyArticle,
   postCommentbyArticle,
+  patchArticlebyId,
 } = require("./controllers/article-controller");
 const { getTopics } = require("./controllers/topic-controller");
 
@@ -21,6 +22,8 @@ app.get("/api/articles/:article_id", getArticlebyId);
 app.get("/api/articles/:article_id/comments", getCommentsbyArticle);
 
 app.post("/api/articles/:article_id", postCommentbyArticle);
+
+app.patch("/api/articles/:article_id", patchArticlebyId);
 
 app.all("/*", (req, res) => {
   res.status(404).send({ msg: "URL not found" });

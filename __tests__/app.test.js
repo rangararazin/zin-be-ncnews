@@ -249,3 +249,97 @@ describe("POST: /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("PATCH: /api/articles/:article_id", () => {
+  test("200: responds article with incremental votes", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({
+        inc_votes: 5,
+      })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toMatchObject({
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: expect.any(String),
+          votes: 105,
+        });
+      });
+  });
+  test("200: responds article with decremental votes", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({
+        inc_votes: -5,
+      })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toMatchObject({
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: expect.any(String),
+          votes: 95,
+        });
+      });
+  });
+  test("400: Bad request if inc_votes is not number", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({
+        inc_votes: "notnumber",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("400: Bad request when patching with malformed/empty body", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ username: 21321 })
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request");
+      });
+  });
+  test("404: respond with not found message when valid id but article does not exist", () => {
+    return request(app)
+      .patch("/api/articles/45454")
+      .send({
+        inc_votes: 10,
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Article not found");
+      });
+  });
+  test("400: returns bad request when passed invalid datatype article_id", () => {
+    return request(app)
+      .patch("/api/articles/not-a-number")
+      .send({
+        inc_votes: 10,
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("400: Bad request when patching with wrong/misspelled object keys", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({
+        inc_vots: 10,
+      })
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request");
+      });
+  });
+});
