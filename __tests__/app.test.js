@@ -70,7 +70,7 @@ describe("GET: /api/articles", () => {
 });
 
 describe("GET: /api/articles/:article_id", () => {
-  test("200: should return an array of articles of given id", () => {
+  test("200: should return an array of articles of given id with an added comment_count property", () => {
     return request(app)
       .get("/api/articles/1")
       .expect(200)
@@ -83,6 +83,7 @@ describe("GET: /api/articles/:article_id", () => {
           topic: "mitch",
           created_at: expect.any(String),
           votes: 100,
+          comment_count: expect.any(Number),
         });
       });
   });
