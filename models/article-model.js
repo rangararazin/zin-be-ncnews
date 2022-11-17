@@ -51,10 +51,13 @@ exports.selectArticlebyId = (article_id) => {
   return db
     .query(
       `
-      SELECT articles.author,title,article_id,body, topic,created_at,votes 
+      SELECT articles.*,
+      CAST(COUNT(comment_id) AS INT) AS comment_count
       FROM articles
       JOIN users ON users.username=articles.author
-      WHERE article_id = $1`,
+      JOIN comments ON comments.article_id=articles.article_id
+      WHERE articles.article_id = $1
+      GROUP BY articles.article_id`,
       [article_id]
     )
     .then((result) => {
