@@ -75,7 +75,7 @@ describe("GET: /api/articles/:article_id", () => {
       .get("/api/articles/1")
       .expect(200)
       .then(({ body }) => {
-        expect(body.article).toEqual({
+        expect(body.article).toMatchObject({
           author: "butter_bridge",
           title: "Living in the shadow of a great man",
           article_id: 1,
@@ -431,6 +431,33 @@ describe("GET: /api/articles queries", () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.articles).toEqual([]);
+      });
+  });
+});
+
+describe("DELETE: /api/comments/:comment_id", () => {
+  test("204: Delete a comment of specified comment id", () => {
+    return request(app)
+      .delete("/api/comments/2")
+      .expect(204)
+      .then(({ body }) => {
+        expect(body).toEqual({});
+      });
+  });
+  test("404: valid but non existent comment id ", () => {
+    return request(app)
+      .delete("/api/comments/222222")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Comment not found");
+      });
+  });
+  test("400: Bad request if comment_id is not number", () => {
+    return request(app)
+      .delete("/api/comments/notnumber")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
       });
   });
 });
