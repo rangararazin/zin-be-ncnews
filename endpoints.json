@@ -10,18 +10,95 @@
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all topics",
+    "description": "serves an array of all articles",
     "queries": ["author", "topic", "sort_by", "order"],
     "exampleResponse": {
       "articles": [
         {
-          "title": "Seafood substitutions are increasing",
-          "topic": "cooking",
-          "author": "weegembump",
-          "body": "Text from the article..",
-          "created_at": 1527695953341
+          "title": "Living in the shadow of a great man",
+          "topic": "mitch",
+          "author": "butter_bridge",
+          "body": "I find this existence challenging",
+          "created_at": 1594329060000,
+          "votes": 100
         }
       ]
     }
+  },
+  "GET /api/articles/:article_id": {
+    "description": "Serves on object containing the single article",
+    "exampleResponse": {
+      "article": {
+        "title": "Eight pug gifs that remind me of mitch",
+        "topic": "mitch",
+        "author": "icellusedkars",
+        "body": "some gifs",
+        "created_at": 1604394720000,
+        "votes": 0
+      }
+    }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "Increments the votes property on the given article before serving it. Must be sent with an object as described in 'send'. inc_votes will default to 0 if not provided.",
+    "send": {
+      "inc_votes": 1
+    },
+    "exampleResponse": {
+      "article": {
+        "title": "Eight pug gifs that remind me of mitch",
+        "topic": "mitch",
+        "author": "icellusedkars",
+        "body": "some gifs",
+        "created_at": 1604394720000,
+        "votes": 1
+      }
+    }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "Serves an array containing the comments for the given article.",
+    "exampleResponse": {
+      "comments": [
+        {
+          "author": "icellusedkars",
+          "body": "Text from the comment..",
+          "comment_id": 1,
+          "created_at": 1583025180000,
+          "votes": 16
+        }
+      ]
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "Posts a comment to the given article. Must be provided an object with 'username' and 'body' properties",
+    "send": {
+      "username": "exampleUsername",
+      "body": "Body of comment"
+    },
+    "exampleResponse": {
+      "comments": [
+        {
+          "author": "icellusedkars",
+          "body": "Text from the comment..",
+          "comment_id": 1,
+          "created_at": 1583025180000,
+          "votes": 16
+        }
+      ]
+    }
+  },
+  "GET /api/users": {
+    "description": "Serves an array of users",
+    "exampleResponse": {
+      "users": [
+        {
+          "username": "butter_bridge",
+          "name": "jonny",
+          "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+        }
+      ]
+    }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "Deletes the given comment, with nothing being served in response"
   }
 }
