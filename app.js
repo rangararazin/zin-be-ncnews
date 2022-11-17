@@ -10,6 +10,7 @@ const { getTopics } = require("./controllers/topic-controller");
 const { getUsers } = require("./controllers/user-controller");
 
 const { handleCustomError, handlePSQLError } = require("./errors/errors");
+const { deleteCommentbyId } = require("./controllers/comment-controller");
 const app = express();
 
 app.use(express.json());
@@ -27,6 +28,8 @@ app.post("/api/articles/:article_id", postCommentbyArticle);
 app.patch("/api/articles/:article_id", patchArticlebyId);
 
 app.get("/api/users", getUsers);
+
+app.delete("/api/comments/:comment_id", deleteCommentbyId);
 
 app.all("/*", (req, res) => {
   res.status(404).send({ msg: "URL not found" });
