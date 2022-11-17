@@ -1,28 +1,50 @@
 const db = require("../db/connection.js");
-const { checkArticleExist, checkUserExist } = require("../utils/db.js");
+const {
+  checkArticleExist,
+  checkUserExist,
+  checkTopicsExist,
+} = require("../utils/db.js");
 
-exports.selectAricles = () => {
-  return db
-    .query(
-      `
-        SELECT articles.author,title,articles.article_id, topic,articles.created_at, 
-        articles.votes,
-        COUNT(comment_id)AS comment_count FROM articles
-        JOIN users ON users.username=articles.author
-        JOIN comments ON comments.article_id=articles.article_id
-        GROUP BY articles.article_id    
-        ORDER BY articles.created_at DESC
-         `
-    )
-    .then((result) => {
-      let convertedResult = result.rows.map((element) => {
-        let obj = { ...element };
-        obj.comment_count = Number(obj.comment_count);
-        return obj;
+exports.selectAricles = (topic, sort_by = "created_at", order = "desc") => {
+  const validColumns = ["created_at", "title", "topic", "author", "votes"];
+
+  if (!validColumns.includes(sort_by)) {
+    return Promise.reject({ status: 400, msg: "invalid sort query" });
+  }
+
+  const validOrder = ["asc", "desc"];
+  if (!validOrder.includes(order)) {
+    return Promise.reject({ status: 400, msg: "invalid order query" });
+  }
+
+  let qryStr = `SELECT articles.author,title,articles.article_id, topic,articles.created_at,articles.votes,COUNT(comment_id)AS comment_count FROM articles
+  JOIN users ON users.username=articles.author
+  JOIN comments ON comments.article_id=articles.article_id`;
+
+  const queryValues = [];
+  if (topic) {
+    qryStr += ` WHERE topic=$1`;
+    queryValues.push(topic);
+  }
+
+  qryStr += ` GROUP BY articles.article_id    
+    ORDER BY articles.${sort_by} ${order};
+     `;
+
+  return db.query(qryStr, queryValues).then((result) => {
+    if (!result.rows.length) {
+      return checkTopicsExist(topic).then((topicExist) => {
+        return [];
       });
-
-      return convertedResult;
+    }
+    let convertedResult = result.rows.map((element) => {
+      let obj = { ...element };
+      obj.comment_count = Number(obj.comment_count);
+      return obj;
     });
+
+    return convertedResult;
+  });
 };
 
 exports.selectArticlebyId = (article_id) => {

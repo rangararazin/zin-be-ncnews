@@ -344,8 +344,8 @@ describe("PATCH: /api/articles/:article_id", () => {
   });
 });
 
-describe("GET /api/users", () => {
-  test("200 : responds with an array of user objects", () => {
+describe("GET: /api/users", () => {
+  test("200: responds with an array of user objects", () => {
     return request(app)
       .get("/api/users")
       .expect(200)
@@ -358,6 +358,78 @@ describe("GET /api/users", () => {
             avatar_url: expect.any(String),
           });
         });
+      });
+  });
+});
+
+describe("GET: /api/articles queries", () => {
+  test("200: filter out articles by given topic query", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        body.articles.forEach((article) => {
+          expect(article.topic).toBe("mitch");
+        });
+      });
+  });
+  test("404: valid but non existent topic query ", () => {
+    return request(app)
+      .get("/api/articles?topic=banana")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Topic not found");
+      });
+  });
+
+  test("200: should return array of article sorted by date created in descending order", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+
+  test("200: sort array of articles by specified sort_by value", () => {
+    return request(app)
+      .get("/api/articles?sort_by=author")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("author", { descending: true });
+      });
+  });
+  test("400: invalid sort query ", () => {
+    return request(app)
+      .get("/api/articles?sort_by=badquery")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("invalid sort query");
+      });
+  });
+  test("200: should return array of article sorted in ascending order by default created_at sort value", () => {
+    return request(app)
+      .get("/api/articles?order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("created_at", { descending: false });
+      });
+  });
+  test("400: invalid order query ", () => {
+    return request(app)
+      .get("/api/articles?order=badquery")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("invalid order query");
+      });
+  });
+
+  test("200: return empty array when valid existent topic but not associated with any article query ", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toEqual([]);
       });
   });
 });
