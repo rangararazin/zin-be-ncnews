@@ -38,7 +38,7 @@ describe("GET: /api/topics", () => {
         });
       });
   });
-});
+}); //
 
 describe("GET: /api/articles", () => {
   test("200: should return an array of articles", () => {
@@ -67,7 +67,7 @@ describe("GET: /api/articles", () => {
         expect(body.articles).toBeSortedBy("created_at", { descending: true });
       });
   });
-});
+}); //
 
 describe("GET: /api/articles/:article_id", () => {
   test("200: should return an array of articles of given id with an added comment_count property", () => {
@@ -103,7 +103,7 @@ describe("GET: /api/articles/:article_id", () => {
         expect(body.msg).toBe("Bad request");
       });
   });
-});
+}); //
 
 describe("GET: /api/articles/:article_id/comments", () => {
   test("200: responds with array of comments of given articel_id", () => {
@@ -155,7 +155,7 @@ describe("GET: /api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("Bad request");
       });
   });
-});
+}); //
 
 describe("POST: /api/articles/:article_id/comments", () => {
   test("201: responds with new comment", () => {
@@ -249,7 +249,7 @@ describe("POST: /api/articles/:article_id/comments", () => {
         expect(res.body.msg).toBe("Bad request");
       });
   });
-});
+}); //
 
 describe("PATCH: /api/articles/:article_id", () => {
   test("200: responds article with incremental votes", () => {
@@ -343,7 +343,7 @@ describe("PATCH: /api/articles/:article_id", () => {
         expect(res.body.msg).toBe("Bad request");
       });
   });
-});
+}); //
 
 describe("GET: /api/users", () => {
   test("200: responds with an array of user objects", () => {
@@ -361,7 +361,7 @@ describe("GET: /api/users", () => {
         });
       });
   });
-});
+}); //
 
 describe("GET: /api/articles queries", () => {
   test("200: filter out articles by given topic query", () => {
@@ -458,6 +458,29 @@ describe("DELETE: /api/comments/:comment_id", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Bad request");
+      });
+  });
+}); //
+
+describe("GET:  /api", () => {
+  test("200: should responds with JSON object with describing all available endpoints", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.endpoints).toEqual(
+          expect.objectContaining({
+            "GET /api": expect.any(Object),
+            "GET /api/topics": expect.any(Object),
+            "GET /api/articles": expect.any(Object),
+            "GET /api/articles/:article_id": expect.any(Object),
+            "PATCH /api/articles/:article_id": expect.any(Object),
+            "GET /api/articles/:article_id/comments": expect.any(Object),
+            "POST /api/articles/:article_id/comments": expect.any(Object),
+            "GET /api/users": expect.any(Object),
+            "DELETE /api/comments/:comment_id": expect.any(Object),
+          })
+        );
       });
   });
 });

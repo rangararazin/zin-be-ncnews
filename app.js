@@ -11,6 +11,7 @@ const { getUsers } = require("./controllers/user-controller");
 
 const { handleCustomError, handlePSQLError } = require("./errors/errors");
 const { deleteCommentbyId } = require("./controllers/comment-controller");
+const { getEndpoints } = require("./controllers/endpoint-controller");
 const app = express();
 
 app.use(express.json());
@@ -30,6 +31,8 @@ app.patch("/api/articles/:article_id", patchArticlebyId);
 app.get("/api/users", getUsers);
 
 app.delete("/api/comments/:comment_id", deleteCommentbyId);
+
+app.get("/api", getEndpoints);
 
 app.all("/*", (req, res) => {
   res.status(404).send({ msg: "URL not found" });
