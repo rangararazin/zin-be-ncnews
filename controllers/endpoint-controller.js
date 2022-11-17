@@ -1,7 +1,13 @@
-const { readEndpoints } = require("../models/endpoint-model");
+const fs = require("fs/promises");
+const path = "./endpoints.json";
 
 exports.getEndpoints = (req, res, next) => {
-  readEndpoints().then((endpoint) => {
-    res.status(200).send({ endpoints: endpoint });
-  });
+  return fs
+    .readFile(path, "utf-8")
+    .then((data) => {
+      return JSON.parse(data);
+    })
+    .then((result) => {
+      res.status(200).send({ endpoints: result });
+    });
 };
