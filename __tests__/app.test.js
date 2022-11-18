@@ -484,3 +484,27 @@ describe("GET:  /api", () => {
       });
   });
 });
+
+describe.only("GET: /api/users/:username", () => {
+  test("200: should return an array of user of given username", () => {
+    return request(app)
+      .get("/api/users/rogersop")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.user).toMatchObject({
+          username: "rogersop",
+          name: "paul",
+          avatar_url:
+            "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4",
+        });
+      });
+  });
+  test("404: respond with not found message when valid username but does not exist", () => {
+    return request(app)
+      .get("/api/users/notauser")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("User not found");
+      });
+  });
+});
