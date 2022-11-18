@@ -1,42 +1,19 @@
 const express = require("express");
-const {
-  getArticles,
-  getArticlebyId,
-  getCommentsbyArticle,
-  postCommentbyArticle,
-  patchArticlebyId,
-} = require("./controllers/article-controller");
-const { getTopics } = require("./controllers/topic-controller");
-const { getUsers } = require("./controllers/user-controller");
+const apiRouter = require("./routes/api-router");
 
-const { handleCustomError, handlePSQLError } = require("./errors/errors");
-const { deleteCommentbyId } = require("./controllers/comment-controller");
-const { getEndpoints } = require("./controllers/endpoint-controller");
+const {
+  handleCustomError,
+  handlePSQLError,
+  urlError,
+} = require("./errors/errors");
+
 const app = express();
 
 app.use(express.json());
 
-app.get("/api/topics", getTopics);
+app.use("/api", apiRouter);
 
-app.get("/api/articles", getArticles);
-
-app.get("/api/articles/:article_id", getArticlebyId);
-
-app.get("/api/articles/:article_id/comments", getCommentsbyArticle);
-
-app.post("/api/articles/:article_id", postCommentbyArticle);
-
-app.patch("/api/articles/:article_id", patchArticlebyId);
-
-app.get("/api/users", getUsers);
-
-app.delete("/api/comments/:comment_id", deleteCommentbyId);
-
-app.get("/api", getEndpoints);
-
-app.all("/*", (req, res) => {
-  res.status(404).send({ msg: "URL not found" });
-});
+app.all("/*", urlError);
 
 app.use(handleCustomError);
 app.use(handlePSQLError);

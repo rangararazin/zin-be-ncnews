@@ -13,3 +13,7 @@ exports.handlePSQLError = (err, req, res, next) => {
     next(err);
   }
 };
+
+exports.urlError = (req, res) => {
+  res.status(404).send({ msg: "URL not found" });
+};
