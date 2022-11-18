@@ -3,6 +3,7 @@ const db = require("../db/connection.js");
 const seed = require("../db/seeds/seed.js");
 const testData = require("../db/data/test-data/index.js");
 const app = require("../app");
+const { string } = require("pg-format");
 
 beforeEach(() => {
   return seed(testData);
@@ -505,6 +506,98 @@ describe("GET: /api/users/:username", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("User not found");
+      });
+  });
+});
+
+describe("PATCH: /api/comments/:comment_id", () => {
+  test("200: responds comment with incremental votes", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({
+        inc_votes: 5,
+      })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comment).toMatchObject({
+          comment_id: 1,
+          body: expect.any(String),
+          votes: 21,
+          author: "butter_bridge",
+          article_id: 9,
+          created_at: expect.any(String),
+        });
+      });
+  });
+  test("200: responds comment with decremental votes", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({
+        inc_votes: -5,
+      })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comment).toMatchObject({
+          comment_id: 1,
+          body: expect.any(String),
+          votes: 11,
+          author: "butter_bridge",
+          article_id: 9,
+          created_at: expect.any(String),
+        });
+      });
+  });
+  test("400: Bad request if inc_votes is not number", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({
+        inc_votes: "notnumber",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("400: Bad request when patching with malformed/empty body", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ username: 21321 })
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request");
+      });
+  });
+  test("404: respond with not found message when valid comment id does not exist", () => {
+    return request(app)
+      .patch("/api/comments/45454")
+      .send({
+        inc_votes: 10,
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Comment not found");
+      });
+  });
+  test("400: returns bad request when passed invalid datatype comment_id", () => {
+    return request(app)
+      .patch("/api/comments/not-a-number")
+      .send({
+        inc_votes: 10,
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("400: Bad request when patching with wrong/misspelled object keys", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({
+        inc_vots: 10,
+      })
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request");
       });
   });
 });
