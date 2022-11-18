@@ -485,7 +485,7 @@ describe("GET:  /api", () => {
   });
 });
 
-describe.only("GET: /api/users/:username", () => {
+describe("GET: /api/users/:username", () => {
   test("200: should return an array of user of given username", () => {
     return request(app)
       .get("/api/users/rogersop")

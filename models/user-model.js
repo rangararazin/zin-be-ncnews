@@ -15,7 +15,6 @@ exports.selectUsers = () => {
 exports.selectUserbyUsername = async (username) => {
   await checkUserExist("username", username);
 
-  console.log(typeof username);
   const result = await db.query(
     `
   SELECT * FROM users
