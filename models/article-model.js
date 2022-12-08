@@ -17,6 +17,7 @@ exports.selectAricles = (topic, sort_by = "created_at", order = "desc") => {
 
   if (!validColumns.includes(sort_by)) {
     return Promise.reject({ status: 400, msg: "invalid sort query" });
+    //comment
   }
 
   const validOrder = ["asc", "desc"];
