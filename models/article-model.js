@@ -6,7 +6,14 @@ const {
 } = require("../utils/db.js");
 
 exports.selectAricles = (topic, sort_by = "created_at", order = "desc") => {
-  const validColumns = ["created_at", "title", "topic", "author", "votes"];
+  const validColumns = [
+    "created_at",
+    "title",
+    "topic",
+    "author",
+    "votes",
+    "comment_count",
+  ];
 
   if (!validColumns.includes(sort_by)) {
     return Promise.reject({ status: 400, msg: "invalid sort query" });
