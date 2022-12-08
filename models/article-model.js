@@ -24,7 +24,7 @@ exports.selectAricles = (topic, sort_by = "created_at", order = "desc") => {
     return Promise.reject({ status: 400, msg: "invalid order query" });
   }
 
-  let qryStr = `SELECT articles.author,title,articles.article_id, topic,articles.created_at,articles.votes,COUNT(comment_id)AS comment_count FROM articles
+  let qryStr = `SELECT articles.author,title,articles.article_id, topic,articles.created_at,articles.votes,COUNT(comments.comment_id)AS comment_count FROM articles
   JOIN users ON users.username=articles.author
   JOIN comments ON comments.article_id=articles.article_id`;
 
@@ -35,7 +35,7 @@ exports.selectAricles = (topic, sort_by = "created_at", order = "desc") => {
   }
 
   qryStr += ` GROUP BY articles.article_id    
-    ORDER BY articles.${sort_by} ${order};
+    ORDER BY ${sort_by} ${order};
      `;
 
   return db.query(qryStr, queryValues).then((result) => {
